@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.271
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aix.TimerManage", "Aix.TimerManage\Aix.TimerManage.csproj", "{FC2A7E38-8579-4A5D-84E1-4C630D2AFBAF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{ADD70248-E054-4661-886D-8A53821B0668}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleSample", "Samples\ConsoleSample\ConsoleSample.csproj", "{0AD521D4-BBFB-447D-8185-266ED378802C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FC2A7E38-8579-4A5D-84E1-4C630D2AFBAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC2A7E38-8579-4A5D-84E1-4C630D2AFBAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC2A7E38-8579-4A5D-84E1-4C630D2AFBAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC2A7E38-8579-4A5D-84E1-4C630D2AFBAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0AD521D4-BBFB-447D-8185-266ED378802C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AD521D4-BBFB-447D-8185-266ED378802C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AD521D4-BBFB-447D-8185-266ED378802C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AD521D4-BBFB-447D-8185-266ED378802C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0AD521D4-BBFB-447D-8185-266ED378802C} = {ADD70248-E054-4661-886D-8A53821B0668}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E39827D6-CDF6-4F3A-8333-133B8A4A2A09}
+	EndGlobalSection
+EndGlobal
