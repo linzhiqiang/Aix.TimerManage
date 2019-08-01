@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace Aix.TimerManage
 {
+    /// <summary>
+    /// 时间表达式定时job，注意 定时间隔时 要是60能整除的如 1,2,3,5,6,10,60...
+    /// </summary>
     public class CrontabTask : ITimerTask
     {
         public event Func<string, Task> OnException;
@@ -15,7 +18,7 @@ namespace Aix.TimerManage
         private IMyJob Job = null;
         private CrontabSchedule Schedule = null;
 
-        private DateTime LastDueTime = DateTime.MinValue;
+        private DateTime LastExecuteTime = DateTime.MinValue;
 
         public CrontabTask(string expression, IMyJob job)
         {
@@ -33,13 +36,7 @@ namespace Aix.TimerManage
             this.IsRunning = true;
             return Task.Factory.StartNew(async () =>
             {
-                LastDueTime = DateTime.Now;
-                var dueTime = GetNextDueTime();
-                if (dueTime.TotalMilliseconds > 0)
-                {
-                    await Task.Delay((int)dueTime.TotalMilliseconds);
-                }
-
+                
                 await Execute(context);
             }, TaskCreationOptions.LongRunning);
         }
@@ -55,12 +52,26 @@ namespace Aix.TimerManage
 
         private async Task Execute(MyJobContext context)
         {
+            TimeSpan nextExecuteTimeSpan = TimeSpan.Zero;
+            LastExecuteTime = DateTime.Now;
             while (IsRunning && !context.IsShutdownRequested)
             {
                 try
                 {
-                    context.Token.ThrowIfCancellationRequested();
-                    await this.Job.Execute(context);
+                    nextExecuteTimeSpan = GetNextDueTime(Schedule, LastExecuteTime, DateTime.Now);
+                    if (nextExecuteTimeSpan.TotalMilliseconds <= 0)
+                    {
+                        LastExecuteTime = DateTime.Now;
+                        context.Token.ThrowIfCancellationRequested();
+                        await ExecuteJob(context);
+
+                        nextExecuteTimeSpan = GetNextDueTime(Schedule, LastExecuteTime, DateTime.Now);
+                    }
+
+                    if (nextExecuteTimeSpan > TimeSpan.Zero)
+                    {
+                        await Task.Delay(nextExecuteTimeSpan);
+                    }
                 }
                 catch (OperationCanceledException)
                 {
@@ -74,26 +85,33 @@ namespace Aix.TimerManage
                 }
                 finally
                 {
-                    var dueTime = GetNextDueTime();
-                    if (dueTime.TotalMilliseconds > 0)
-                    {
-                        await Task.Delay((int)dueTime.TotalMilliseconds);
-                    }
+
                 }
             }
 
         }
 
-        private TimeSpan GetNextDueTime()
+        private async Task ExecuteJob(MyJobContext context)
+        {
+            try
+            {
+                await this.Job.Execute(context);
+            }
+            catch (Exception ex)
+            {
+                string message = string.Format("执行定时任务{0}出错：message={1},StackTrace={2}", this.Job.GetType().FullName, ex.Message, ex.StackTrace);
+                await this.Exception(message);
+            }
+        }
+
+        public static TimeSpan GetNextDueTime(CrontabSchedule Schedule, DateTime LastDueTime, DateTime now)
         {
             var nextOccurrence = Schedule.GetNextOccurrence(LastDueTime);
-            TimeSpan dueTime = nextOccurrence - DateTime.Now;
-            LastDueTime = nextOccurrence;
+            TimeSpan dueTime = nextOccurrence - now;// DateTime.Now;
 
-            if (dueTime.TotalMilliseconds < 0)
+            if (dueTime.TotalMilliseconds <= 0)
             {
                 dueTime = TimeSpan.Zero;
-                LastDueTime = DateTime.Now;
             }
 
             return dueTime;

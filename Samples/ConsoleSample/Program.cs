@@ -28,9 +28,10 @@ namespace ConsoleSample
             TaskManager taskManager = new TaskManager();
             taskManager.OnException += TaskManager_OnException;
             Console.WriteLine(DateTime.Now);
-            taskManager.RegisterTimerTask(new TimerTaskJob(), 5 * 1000, 5 * 1000);
-            taskManager.RegisterCrontabTask(new CrontabTaskJob(), "*/5 * * * * *");
-            taskManager.RegisterSpinTimerTassk(new SpinTimerTaskJob());
+            //taskManager.RegisterTimerTask(new TimerTaskJob(), 5 * 1000, 5 * 1000);
+           // taskManager.RegisterCrontabTask(new CrontabTaskJob(), "*/5 * * * * *");//每5秒
+            taskManager.RegisterCrontabTask(new CrontabTaskJob(), "13 * * * * *");
+            //taskManager.RegisterSpinTimerTassk(new SpinTimerTaskJob());
 
             var context = new MyJobContext(cancellationToken);
             return taskManager.Start(context);

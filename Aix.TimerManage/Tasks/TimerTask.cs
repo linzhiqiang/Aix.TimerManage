@@ -49,7 +49,7 @@ namespace Aix.TimerManage
 
                     var dealy = Period - performanceDuration;
                     if (dealy > 0)
-                        await Task.Delay((int)dealy);
+                        await Task.Delay(TimeSpan.FromMilliseconds(dealy));
                 }
                 catch (OperationCanceledException)
                 {

@@ -90,7 +90,15 @@ namespace Aix.TimerManage
         private async Task TimerTask_OnException1(string arg)
         {
             if (OnException != null)
-                await OnException(arg);
+            {
+                try
+                {
+                    await OnException(arg);
+                }
+                catch
+                {
+                }
+            }
         }
 
 
