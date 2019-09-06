@@ -29,7 +29,7 @@ namespace ConsoleSample
             taskManager.OnException += TaskManager_OnException;
             Console.WriteLine(DateTime.Now);
             //taskManager.RegisterTimerTask(new TimerTaskJob(), 5 * 1000, 5 * 1000);
-           // taskManager.RegisterCrontabTask(new CrontabTaskJob(), "*/5 * * * * *");//每5秒
+           //taskManager.RegisterCrontabTask(new CrontabTaskJob(), "*/5 * * * * *");//每5秒
             taskManager.RegisterCrontabTask(new CrontabTaskJob(), "13 * * * * *");
             //taskManager.RegisterSpinTimerTassk(new SpinTimerTaskJob());
 

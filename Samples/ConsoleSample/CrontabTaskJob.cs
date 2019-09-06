@@ -12,7 +12,7 @@ namespace ConsoleSample
         {
             var result = new MyJobResult();
             Console.WriteLine("CrontabTaskJob:" + DateTime.Now);
-            //await Task.Delay(2000);
+            await Task.Delay(2000);
             await Task.CompletedTask;
             return result;
         }

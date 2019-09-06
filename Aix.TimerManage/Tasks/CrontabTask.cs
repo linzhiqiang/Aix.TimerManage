@@ -18,8 +18,6 @@ namespace Aix.TimerManage
         private IMyJob Job = null;
         private CrontabSchedule Schedule = null;
 
-        private DateTime LastExecuteTime = DateTime.MinValue;
-
         public CrontabTask(string expression, IMyJob job)
         {
             this.Job = job;
@@ -36,7 +34,6 @@ namespace Aix.TimerManage
             this.IsRunning = true;
             return Task.Factory.StartNew(async () =>
             {
-                
                 await Execute(context);
             }, TaskCreationOptions.LongRunning);
         }
@@ -50,22 +47,32 @@ namespace Aix.TimerManage
 
         #region  private
 
+        private DateTime LastExecuteTime = DateTime.MinValue;
+        private DateTime GetLastExecuteTime()
+        {
+            return LastExecuteTime;
+        }
+
+        private void SetLastExecuteTime(DateTime dateTime)
+        {
+            LastExecuteTime = dateTime;
+        }
         private async Task Execute(MyJobContext context)
         {
             TimeSpan nextExecuteTimeSpan = TimeSpan.Zero;
-            LastExecuteTime = DateTime.Now;
+            SetLastExecuteTime(DateTime.Now);//如果是存入redis，这句就不要了
             while (IsRunning && !context.IsShutdownRequested)
             {
                 try
                 {
-                    nextExecuteTimeSpan = GetNextDueTime(Schedule, LastExecuteTime, DateTime.Now);
+                    nextExecuteTimeSpan = GetNextDueTime(Schedule, GetLastExecuteTime(), DateTime.Now);
                     if (nextExecuteTimeSpan.TotalMilliseconds <= 0)
                     {
-                        LastExecuteTime = DateTime.Now;
+                        SetLastExecuteTime(DateTime.Now);
                         context.Token.ThrowIfCancellationRequested();
                         await ExecuteJob(context);
 
-                        nextExecuteTimeSpan = GetNextDueTime(Schedule, LastExecuteTime, DateTime.Now);
+                        nextExecuteTimeSpan = GetNextDueTime(Schedule, GetLastExecuteTime(), DateTime.Now);
                     }
 
                     if (nextExecuteTimeSpan > TimeSpan.Zero)
@@ -88,7 +95,6 @@ namespace Aix.TimerManage
 
                 }
             }
-
         }
 
         private async Task ExecuteJob(MyJobContext context)
